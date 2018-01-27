@@ -41,3 +41,31 @@ matrix:
 
     # Windows
     # - env: TARGET=x86_64-pc-windows-gnu
+
+deploy:
+  api_key:
+    secure: QEXGc9LH1V2Qd8/hpLDegeXQR6m+lt+wi8PdN9BlYX9qNM8snF6mHkNAICBLAcXQU4Xfc8XRRSHnN3661n/Kq1vo4Cva9CCSvg38eyQF3a+roucWGc1WxeAvIQH6JX/h8pc8O8uKB7SAGQm0ZaM+ofWJ6h6Is/7d2ary/ITzqE4=
+  file_glob: true
+  file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
+  on:
+    # Generate binary releases for the stable channel
+    condition: $TRAVIS_RUST_VERSION = stable
+    tags: true
+  provider: releases
+  skip_cleanup: true
+
+cache: cargo
+before_cache:
+  # Travis can't cache files that are not readable by "others"
+  - chmod -R a+r $HOME/.cargo
+
+branches:
+  only:
+    # release tags
+    - /^\d+\.\d+\.\d+.*$/
+    - master
+    - travis
+
+notifications:
+  email:
+    on_success: never
